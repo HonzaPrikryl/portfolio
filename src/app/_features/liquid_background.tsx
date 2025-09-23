@@ -75,7 +75,7 @@ export default function LiquidBackground({
   autoIntensity = 2,
   takeoverDuration = 0.25,
   autoResumeDelay = 500,
-  autoRampDuration = 0.6
+  autoRampDuration = 0.6,
 }: LiquidEtherProps): React.ReactElement {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const webglRef = useRef<LiquidEtherWebGL | null>(null);
@@ -579,10 +579,10 @@ export default function LiquidBackground({
               fboSize: { value: simProps.fboSize },
               velocity: { value: simProps.src.texture },
               dt: { value: simProps.dt },
-              isBFECC: { value: true }
-            }
+              isBFECC: { value: true },
+            },
           },
-          output: simProps.dst
+          output: simProps.dst,
         });
         this.uniforms = this.props.material.uniforms;
         this.init();
@@ -594,19 +594,23 @@ export default function LiquidBackground({
       createBoundary() {
         const boundaryG = new THREE.BufferGeometry();
         const vertices_boundary = new Float32Array([
-          -1, -1, 0, -1, 1, 0, -1, 1, 0, 1, 1, 0, 1, 1, 0, 1, -1, 0, 1, -1, 0, -1, -1, 0
+          -1, -1, 0, -1, 1, 0, -1, 1, 0, 1, 1, 0, 1, 1, 0, 1, -1, 0, 1, -1, 0, -1, -1, 0,
         ]);
         boundaryG.setAttribute('position', new THREE.BufferAttribute(vertices_boundary, 3));
         const boundaryM = new THREE.RawShaderMaterial({
           vertexShader: line_vert,
           fragmentShader: advection_frag,
-          uniforms: this.uniforms!
+          uniforms: this.uniforms!,
         });
         this.line = new THREE.LineSegments(boundaryG, boundaryM);
         this.scene!.add(this.line);
       }
       update(...args: any[]) {
-        const { dt, isBounce, BFECC } = (args[0] || {}) as { dt?: number; isBounce?: boolean; BFECC?: boolean };
+        const { dt, isBounce, BFECC } = (args[0] || {}) as {
+          dt?: number;
+          isBounce?: boolean;
+          BFECC?: boolean;
+        };
         if (!this.uniforms) return;
         if (typeof dt === 'number') this.uniforms.dt.value = dt;
         if (typeof isBounce === 'boolean') this.line.visible = isBounce;
@@ -633,8 +637,8 @@ export default function LiquidBackground({
             px: { value: simProps.cellScale },
             force: { value: new THREE.Vector2(0, 0) },
             center: { value: new THREE.Vector2(0, 0) },
-            scale: { value: new THREE.Vector2(simProps.cursor_size, simProps.cursor_size) }
-          }
+            scale: { value: new THREE.Vector2(simProps.cursor_size, simProps.cursor_size) },
+          },
         });
         this.mouse = new THREE.Mesh(mouseG, mouseM);
         this.scene!.add(this.mouse);
@@ -675,17 +679,21 @@ export default function LiquidBackground({
               velocity_new: { value: simProps.dst_.texture },
               v: { value: simProps.viscous },
               px: { value: simProps.cellScale },
-              dt: { value: simProps.dt }
-            }
+              dt: { value: simProps.dt },
+            },
           },
           output: simProps.dst,
           output0: simProps.dst_,
-          output1: simProps.dst
+          output1: simProps.dst,
         });
         this.init();
       }
       update(...args: any[]) {
-        const { viscous, iterations, dt } = (args[0] || {}) as { viscous?: number; iterations?: number; dt?: number };
+        const { viscous, iterations, dt } = (args[0] || {}) as {
+          viscous?: number;
+          iterations?: number;
+          dt?: number;
+        };
         if (!this.uniforms) return;
         let fbo_in: any, fbo_out: any;
         if (typeof viscous === 'number') this.uniforms.v.value = viscous;
@@ -717,10 +725,10 @@ export default function LiquidBackground({
               boundarySpace: { value: simProps.boundarySpace },
               velocity: { value: simProps.src.texture },
               px: { value: simProps.cellScale },
-              dt: { value: simProps.dt }
-            }
+              dt: { value: simProps.dt },
+            },
           },
-          output: simProps.dst
+          output: simProps.dst,
         });
         this.init();
       }
@@ -743,12 +751,12 @@ export default function LiquidBackground({
               boundarySpace: { value: simProps.boundarySpace },
               pressure: { value: simProps.dst_.texture },
               divergence: { value: simProps.src.texture },
-              px: { value: simProps.cellScale }
-            }
+              px: { value: simProps.cellScale },
+            },
           },
           output: simProps.dst,
           output0: simProps.dst_,
-          output1: simProps.dst
+          output1: simProps.dst,
         });
         this.init();
       }
@@ -783,10 +791,10 @@ export default function LiquidBackground({
               pressure: { value: simProps.src_p.texture },
               velocity: { value: simProps.src_v.texture },
               px: { value: simProps.cellScale },
-              dt: { value: simProps.dt }
-            }
+              dt: { value: simProps.dt },
+            },
           },
-          output: simProps.dst
+          output: simProps.dst,
         });
         this.init();
       }
@@ -809,7 +817,7 @@ export default function LiquidBackground({
         vel_viscous1: null,
         div: null,
         pressure_0: null,
-        pressure_1: null
+        pressure_1: null,
       };
       fboSize = new THREE.Vector2();
       cellScale = new THREE.Vector2();
@@ -832,7 +840,7 @@ export default function LiquidBackground({
           dt: 0.014,
           isViscous: false,
           BFECC: true,
-          ...options
+          ...options,
         };
         this.init();
       }
@@ -854,7 +862,7 @@ export default function LiquidBackground({
           minFilter: THREE.LinearFilter,
           magFilter: THREE.LinearFilter,
           wrapS: THREE.ClampToEdgeWrapping,
-          wrapT: THREE.ClampToEdgeWrapping
+          wrapT: THREE.ClampToEdgeWrapping,
         } as const;
         for (const key in this.fbos) {
           this.fbos[key] = new THREE.WebGLRenderTarget(this.fboSize.x, this.fboSize.y, opts);
@@ -866,12 +874,12 @@ export default function LiquidBackground({
           fboSize: this.fboSize,
           dt: this.options.dt,
           src: this.fbos.vel_0,
-          dst: this.fbos.vel_1
+          dst: this.fbos.vel_1,
         });
         this.externalForce = new ExternalForce({
           cellScale: this.cellScale,
           cursor_size: this.options.cursor_size,
-          dst: this.fbos.vel_1
+          dst: this.fbos.vel_1,
         });
         this.viscous = new Viscous({
           cellScale: this.cellScale,
@@ -880,21 +888,21 @@ export default function LiquidBackground({
           src: this.fbos.vel_1,
           dst: this.fbos.vel_viscous1,
           dst_: this.fbos.vel_viscous0,
-          dt: this.options.dt
+          dt: this.options.dt,
         });
         this.divergence = new Divergence({
           cellScale: this.cellScale,
           boundarySpace: this.boundarySpace,
           src: this.fbos.vel_viscous0,
           dst: this.fbos.div,
-          dt: this.options.dt
+          dt: this.options.dt,
         });
         this.poisson = new Poisson({
           cellScale: this.cellScale,
           boundarySpace: this.boundarySpace,
           src: this.fbos.div,
           dst: this.fbos.pressure_1,
-          dst_: this.fbos.pressure_0
+          dst_: this.fbos.pressure_0,
         });
         this.pressure = new Pressure({
           cellScale: this.cellScale,
@@ -902,7 +910,7 @@ export default function LiquidBackground({
           src_p: this.fbos.pressure_0,
           src_v: this.fbos.vel_viscous0,
           dst: this.fbos.vel_0,
-          dt: this.options.dt
+          dt: this.options.dt,
         });
       }
       calcSize() {
@@ -920,18 +928,22 @@ export default function LiquidBackground({
       update() {
         if (this.options.isBounce) this.boundarySpace.set(0, 0);
         else this.boundarySpace.copy(this.cellScale);
-        this.advection.update({ dt: this.options.dt, isBounce: this.options.isBounce, BFECC: this.options.BFECC });
+        this.advection.update({
+          dt: this.options.dt,
+          isBounce: this.options.isBounce,
+          BFECC: this.options.BFECC,
+        });
         this.externalForce.update({
           cursor_size: this.options.cursor_size,
           mouse_force: this.options.mouse_force,
-          cellScale: this.cellScale
+          cellScale: this.cellScale,
         });
         let vel: any = this.fbos.vel_1;
         if (this.options.isViscous) {
           vel = this.viscous.update({
             viscous: this.options.viscous,
             iterations: this.options.iterations_viscous,
-            dt: this.options.dt
+            dt: this.options.dt,
           });
         }
         this.divergence.update({ vel });
@@ -960,8 +972,8 @@ export default function LiquidBackground({
               velocity: { value: this.simulation.fbos.vel_0!.texture },
               boundarySpace: { value: new THREE.Vector2() },
               palette: { value: paletteTex },
-              bgColor: { value: bgVec4 }
-            }
+              bgColor: { value: bgVec4 },
+            },
           })
         );
         this.scene.add(this.output);
@@ -1003,7 +1015,7 @@ export default function LiquidBackground({
           enabled: props.autoDemo,
           speed: props.autoSpeed,
           resumeDelay: props.autoResumeDelay,
-          rampDuration: props.autoRampDuration
+          rampDuration: props.autoRampDuration,
         });
         this.init();
         window.addEventListener('resize', this._resize);
@@ -1052,7 +1064,8 @@ export default function LiquidBackground({
       dispose() {
         try {
           window.removeEventListener('resize', this._resize);
-          if (this._onVisibility) document.removeEventListener('visibilitychange', this._onVisibility);
+          if (this._onVisibility)
+            document.removeEventListener('visibilitychange', this._onVisibility);
           Mouse.dispose();
           if (Common.renderer) {
             const canvas = Common.renderer.domElement;
@@ -1076,7 +1089,7 @@ export default function LiquidBackground({
       autoIntensity,
       takeoverDuration,
       autoResumeDelay,
-      autoRampDuration
+      autoRampDuration,
     });
     webglRef.current = webgl;
 
@@ -1095,7 +1108,7 @@ export default function LiquidBackground({
         dt,
         BFECC,
         resolution,
-        isBounce
+        isBounce,
       });
       if (resolution !== prevRes) sim.resize();
     };
@@ -1103,7 +1116,7 @@ export default function LiquidBackground({
     webgl.start();
 
     const io = new IntersectionObserver(
-      entries => {
+      (entries) => {
         const entry = entries[0];
         const isVisible = entry.isIntersecting && entry.intersectionRatio > 0;
         isVisibleRef.current = isVisible;
@@ -1168,7 +1181,7 @@ export default function LiquidBackground({
     autoIntensity,
     takeoverDuration,
     autoResumeDelay,
-    autoRampDuration
+    autoRampDuration,
   ]);
 
   useEffect(() => {
@@ -1187,7 +1200,7 @@ export default function LiquidBackground({
       dt,
       BFECC,
       resolution,
-      isBounce
+      isBounce,
     });
     if (webgl.autoDriver) {
       webgl.autoDriver.enabled = autoDemo;
@@ -1216,13 +1229,13 @@ export default function LiquidBackground({
     autoIntensity,
     takeoverDuration,
     autoResumeDelay,
-    autoRampDuration
+    autoRampDuration,
   ]);
 
   return (
     <div
       ref={mountRef}
-      className={`w-full h-full relative overflow-hidden pointer-events-none touch-none ${className || ''}`}
+      className={`pointer-events-none relative h-full w-full touch-none overflow-hidden ${className || ''}`}
       style={style}
     />
   );

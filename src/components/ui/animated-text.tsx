@@ -3,13 +3,12 @@
 import { motion, Variants } from 'framer-motion';
 
 const containerVariants: Variants = {
-  visible: (delay: number = 0) => ({ 
+  visible: (delay: number = 0) => ({
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: delay, 
+      delayChildren: delay,
     },
   }),
-  hidden: {}, 
+  hidden: {},
 };
 
 const wordVariants: Variants = {
@@ -20,7 +19,7 @@ const wordVariants: Variants = {
   visible: {
     y: '0%',
     transition: {
-      duration: 0.7, 
+      duration: 0.7,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -30,27 +29,26 @@ type AnimatedTextProps = {
   text: string;
   className?: string;
   isReady: boolean;
-  delay?: number; 
+  delay?: number;
 };
 
 export const AnimatedText = ({ text, className, isReady, delay = 0 }: AnimatedTextProps) => {
   const words = text.split(' ');
+
+  if (!isReady) return null;
 
   return (
     <motion.div
       className={className}
       variants={containerVariants}
       initial="hidden"
-      animate={isReady ? 'visible' : 'hidden'}
-      custom={delay} 
+      animate="visible"
+      custom={delay}
       aria-label={text}
     >
       {words.map((word, index) => (
         <div key={index} className="inline-block overflow-hidden">
-          <motion.span
-            className="inline-block"
-            variants={wordVariants}
-          >
+          <motion.span className="inline-block" variants={wordVariants}>
             {word}&nbsp;
           </motion.span>
         </div>

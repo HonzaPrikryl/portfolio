@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useSmoothScroll } from '@/hooks/use-smooth-scroll';
 

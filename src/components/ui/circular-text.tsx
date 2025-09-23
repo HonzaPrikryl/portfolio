@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect } from 'react';
@@ -27,11 +26,11 @@ const getTransition = (duration: number, from: number) => ({
 
 const CircularText: React.FC<CircularTextProps> = ({
   text,
-  spinDuration = 25, 
-  onHover = 'pause', 
+  spinDuration = 25,
+  onHover = 'speedUp',
   className = '',
 }) => {
-  const letters = Array.from(text.toUpperCase()); 
+  const letters = Array.from(text.toUpperCase());
   const controls = useAnimation();
   const rotation: MotionValue<number> = useMotionValue(0);
 
@@ -42,7 +41,6 @@ const CircularText: React.FC<CircularTextProps> = ({
       scale: 1,
       transition: getTransition(spinDuration, start),
     });
-  
   }, [spinDuration, text, onHover, controls, rotation]);
 
   const handleHoverStart = () => {
@@ -64,7 +62,7 @@ const CircularText: React.FC<CircularTextProps> = ({
         };
         break;
     }
-    controls.start({ rotate: start, scale: 1.1, transition: transitionConfig });
+    controls.start({ rotate: start, transition: transitionConfig });
   };
 
   const handleHoverEnd = () => {
@@ -76,12 +74,12 @@ const CircularText: React.FC<CircularTextProps> = ({
     });
   };
 
-  const circleSize = 150;
+  const circleSize = 200;
   const radius = circleSize / 2;
 
   return (
     <motion.div
-      className={`relative flex items-center justify-center font-light text-white cursor-pointer ${className}`}
+      className={`relative flex cursor-pointer items-center justify-center font-light text-white ${className}`}
       style={{ rotate: rotation, width: circleSize, height: circleSize }}
       initial={{ rotate: 0 }}
       animate={controls}
@@ -93,7 +91,7 @@ const CircularText: React.FC<CircularTextProps> = ({
         return (
           <span
             key={i}
-            className="absolute h-full text-lg"
+            className="absolute h-full"
             style={{
               transform: `rotate(${rotationAngle}deg) translateY(-${radius}px)`,
               transformOrigin: `0 ${radius}px`,

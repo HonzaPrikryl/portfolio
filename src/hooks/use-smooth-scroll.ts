@@ -16,7 +16,7 @@ export const useSmoothScroll = () => {
     }
 
     requestAnimationFrame(raf);
-    
+
     return () => {
       lenis.destroy();
     };

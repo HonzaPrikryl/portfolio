@@ -21,12 +21,12 @@ export default function LoadingCount({
   from = 0,
   direction = 'up',
   delay = 0,
-  duration = 0.3,
+  duration = 0.2,
   className = '',
   startWhen = true,
   separator = '',
   onStart,
-  onEnd
+  onEnd,
 }: LoadingCountProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(direction === 'down' ? to : from);
@@ -36,7 +36,7 @@ export default function LoadingCount({
 
   const springValue = useSpring(motionValue, {
     damping,
-    stiffness
+    stiffness,
   });
 
   const isInView = useInView(ref, { once: true, margin: '0px' });
@@ -87,14 +87,14 @@ export default function LoadingCount({
   }, [isInView, startWhen, motionValue, direction, from, to, delay, onStart, onEnd, duration]);
 
   useEffect(() => {
-    const unsubscribe = springValue.on('change', latest => {
+    const unsubscribe = springValue.on('change', (latest) => {
       if (ref.current) {
         const hasDecimals = maxDecimals > 0;
 
         const options: Intl.NumberFormatOptions = {
           useGrouping: !!separator,
           minimumFractionDigits: hasDecimals ? maxDecimals : 0,
-          maximumFractionDigits: hasDecimals ? maxDecimals : 0
+          maximumFractionDigits: hasDecimals ? maxDecimals : 0,
         };
 
         const formattedNumber = Intl.NumberFormat('en-US', options).format(latest);
