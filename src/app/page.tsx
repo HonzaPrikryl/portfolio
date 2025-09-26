@@ -6,7 +6,7 @@ import { Preloader } from './_features/pre-loader';
 import { Hero } from './_features/hero';
 import { AboutMe } from '@/app/_features/about-me';
 import { Header } from '@/app/_features/header';
-import { AnimatedArrowSeparator } from '@/app/_features/animated-arrow-separator';
+import { Separator } from '@/app/_features/separator';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function Home() {
       <AnimatePresence>{isLoading && <Preloader key="preloader" />}</AnimatePresence>
       <Header isReady={isReady} />
       <Hero isReady={isReady} />
-      <AnimatedArrowSeparator />
+      <Separator />
       <AboutMe />
     </main>
   );

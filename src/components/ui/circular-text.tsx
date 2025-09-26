@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { motion, useAnimation, useMotionValue, MotionValue, Transition } from 'framer-motion';
+import { motion, useAnimation, useMotionValue, MotionValue } from 'framer-motion';
 
 interface CircularTextProps {
   text: string;
   spinDuration?: number;
-  onHover?: 'slowDown' | 'speedUp' | 'pause';
   className?: string;
 }
 
@@ -24,53 +23,36 @@ const getTransition = (duration: number, from: number) => ({
   scale: { type: 'spring' as const, damping: 20, stiffness: 300 },
 });
 
-const CircularText: React.FC<CircularTextProps> = ({
-  text,
-  spinDuration = 25,
-  onHover = 'speedUp',
-  className = '',
-}) => {
+const CircularText: React.FC<CircularTextProps> = ({ text, spinDuration = 25, className = '' }) => {
   const letters = Array.from(text.toUpperCase());
   const controls = useAnimation();
-  const rotation: MotionValue<number> = useMotionValue(0);
+  const rotation = useMotionValue(0);
 
   useEffect(() => {
-    const start = rotation.get();
+    const startRotation = rotation.get();
     controls.start({
-      rotate: start + 360,
+      rotate: startRotation + 360,
       scale: 1,
-      transition: getTransition(spinDuration, start),
+      transition: getTransition(spinDuration, startRotation),
     });
-  }, [spinDuration, text, onHover, controls, rotation]);
+  }, [spinDuration, text, controls, rotation]);
 
   const handleHoverStart = () => {
-    const start = rotation.get();
-    let transitionConfig: ReturnType<typeof getTransition> | Transition;
+    const currentRotation = rotation.get();
 
-    switch (onHover) {
-      case 'slowDown':
-        transitionConfig = getTransition(spinDuration * 2, start);
-        break;
-      case 'speedUp':
-        transitionConfig = getTransition(spinDuration / 4, start);
-        break;
-      case 'pause':
-      default:
-        transitionConfig = {
-          rotate: { type: 'spring', damping: 20, stiffness: 300 },
-          scale: { type: 'spring', damping: 20, stiffness: 300 },
-        };
-        break;
-    }
-    controls.start({ rotate: start, transition: transitionConfig });
+    const transitionConfig = getTransition(spinDuration / 4, currentRotation);
+    controls.start({
+      rotate: currentRotation + 360,
+      transition: transitionConfig,
+    });
   };
 
   const handleHoverEnd = () => {
-    const start = rotation.get();
+    const currentRotation = rotation.get();
     controls.start({
-      rotate: start + 360,
+      rotate: currentRotation + 360,
       scale: 1,
-      transition: getTransition(spinDuration, start),
+      transition: getTransition(spinDuration, currentRotation),
     });
   };
 
@@ -79,25 +61,27 @@ const CircularText: React.FC<CircularTextProps> = ({
 
   return (
     <motion.div
-      className={`relative flex cursor-pointer items-center justify-center font-light text-white ${className}`}
-      style={{ rotate: rotation, width: circleSize, height: circleSize }}
+      className={`relative m-2 mx-auto h-[300px] w-[300px] origin-center cursor-pointer rounded-full text-center font-black text-white ${className}`}
+      style={{ rotate: rotation }}
       initial={{ rotate: 0 }}
       animate={controls}
       onMouseEnter={handleHoverStart}
       onMouseLeave={handleHoverEnd}
     >
       {letters.map((letter, i) => {
-        const rotationAngle = (i / letters.length) * 360;
+        const rotationDeg = (360 / letters.length) * i;
+        const factor = Math.PI / letters.length;
+        const x = factor * i;
+        const y = factor * i;
+        const transform = `rotateZ(${rotationDeg}deg) translate3d(${x}px, ${y}px, 0)`;
+
         return (
           <span
             key={i}
-            className="absolute h-full"
-            style={{
-              transform: `rotate(${rotationAngle}deg) translateY(-${radius}px)`,
-              transformOrigin: `0 ${radius}px`,
-            }}
+            className="absolute inset-0 inline-block text-2xl transition-all duration-500 ease-[cubic-bezier(0,0,0,1)]"
+            style={{ transform, WebkitTransform: transform }}
           >
-            {letter === ' ' ? '\u00A0' : letter}
+            {letter}
           </span>
         );
       })}
