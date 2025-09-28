@@ -12,7 +12,7 @@ import SectionLayout from '@/app/_features/section-layout';
 import { fadeInUp } from '@/lib/utils';
 
 const aboutParagraphs = [
-  "Hi, I'm a creative software developer who loves to create order in the chaos of the digital world. I'm passionate about elegant architecture with clean code. My main playground is TypeScript combined with React and React Native, where I focus on crafting modern and smooth user experiences. I'm driven by challenges that force me to think differently.",
+  'I design and build engaging and polished user interfaces for both web and mobile. My expertise lies in the TypeScript, React, and React Native ecosystem, where I focus on writing scalable and maintainable code that helps businesses grow.',
 ];
 
 export const AboutMe = () => {
@@ -75,7 +75,7 @@ export const AboutMe = () => {
         initial="initial"
         animate={isSpecializationsInView ? 'animate' : 'initial'}
         custom={0.2}
-        className="mt-4 rounded-[2em] border border-neutral-200/40 lg:mt-24"
+        className="mt-4 rounded-[2em] border border-neutral-200/40 2xl:mt-24"
       >
         <Specializations isInView={isSpecializationsInView} />
       </motion.div>

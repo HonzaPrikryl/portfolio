@@ -102,8 +102,7 @@ export const MobileMenu = ({ closeMenu }: { closeMenu: () => void }) => {
         ))}
       </motion.nav>
 
-      <div className="flex w-full items-center justify-between text-neutral-400">
-        <span className="text-sm">FEEL FREE TO CONNECT</span>
+      <div className="flex w-full items-center justify-center text-neutral-400">
         <div className="flex gap-4">
           {socialLinks.map((link) => (
             <a
