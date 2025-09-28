@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 
 interface Props {
   isReady: boolean;
+  isFooterAnimationComplete: boolean;
 }
 
-export const Header = ({ isReady }: Props) => {
+export const Header = ({ isReady, isFooterAnimationComplete }: Props) => {
   const [lastY, setLastY] = useState(0);
   const controls = useAnimation();
 
@@ -33,6 +34,11 @@ export const Header = ({ isReady }: Props) => {
   }, [isReady, controls]);
 
   useEffect(() => {
+    if (isFooterAnimationComplete) {
+      controls.start('visible');
+      return;
+    }
+
     const handleScroll = () => {
       const currentY = window.scrollY;
       if (!isReady) return;
@@ -47,11 +53,11 @@ export const Header = ({ isReady }: Props) => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastY, isReady, controls]);
+  }, [lastY, isReady, controls, isFooterAnimationComplete]);
 
   return (
     <motion.header
-      className="fixed top-0 right-0 left-0 z-50 p-8 text-white mix-blend-difference"
+      className="fixed top-0 right-0 left-0 z-50 p-8 mix-blend-difference"
       variants={headerVariants}
       initial="initial"
       animate={controls}

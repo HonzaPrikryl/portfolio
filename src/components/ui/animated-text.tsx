@@ -1,5 +1,6 @@
 'use client';
 
+import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 import { motion, Variants } from 'framer-motion';
 
 const containerVariants: Variants = {
@@ -33,6 +34,7 @@ type AnimatedTextProps = {
 };
 
 export const AnimatedText = ({ text, className, isReady, delay = 0 }: AnimatedTextProps) => {
+  const { setCursorVariant } = useCursor();
   const words = text.split(' ');
 
   if (!isReady) return null;
@@ -48,7 +50,12 @@ export const AnimatedText = ({ text, className, isReady, delay = 0 }: AnimatedTe
     >
       {words.map((word, index) => (
         <div key={index} className="inline-block overflow-hidden">
-          <motion.span className="inline-block" variants={wordVariants}>
+          <motion.span
+            className="inline-block"
+            variants={wordVariants}
+            onMouseEnter={() => setCursorVariant(CursorVariant.TEXT)}
+            onMouseLeave={() => setCursorVariant(CursorVariant.DEFAULT)}
+          >
             {word}&nbsp;
           </motion.span>
         </div>

@@ -2,29 +2,6 @@
 
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-
-export interface LiquidEtherProps {
-  mouseForce?: number;
-  cursorSize?: number;
-  isViscous?: boolean;
-  viscous?: number;
-  iterationsViscous?: number;
-  iterationsPoisson?: number;
-  dt?: number;
-  BFECC?: boolean;
-  resolution?: number;
-  isBounce?: boolean;
-  colors?: string[];
-  style?: React.CSSProperties;
-  className?: string;
-  autoDemo?: boolean;
-  autoSpeed?: number;
-  autoIntensity?: number;
-  takeoverDuration?: number;
-  autoResumeDelay?: number;
-  autoRampDuration?: number;
-}
-
 interface SimOptions {
   iterations_poisson: number;
   iterations_viscous: number;
@@ -54,29 +31,27 @@ interface LiquidEtherWebGL {
   dispose: () => void;
 }
 
-const defaultColors = ['#FFF', '#FFF', '#FFF'];
+const mouseForce = 40;
+const cursorSize = 100;
+const isViscous = false;
+const viscous = 30;
+const iterationsViscous = 64;
+const iterationsPoisson = 64;
+const dt = 0.014;
+const BFECC = true;
+const resolution = 0.5;
+const isBounce = true;
+const colors = ['#FFF', '#FFF', '#FFF'];
+const style = {};
+const className = '';
+const autoDemo = true;
+const autoSpeed = 0.2;
+const autoIntensity = 2;
+const takeoverDuration = 0.25;
+const autoResumeDelay = 500;
+const autoRampDuration = 0.6;
 
-export default function LiquidBackground({
-  mouseForce = 40,
-  cursorSize = 100,
-  isViscous = false,
-  viscous = 30,
-  iterationsViscous = 64,
-  iterationsPoisson = 64,
-  dt = 0.014,
-  BFECC = true,
-  resolution = 0.5,
-  isBounce = true,
-  colors = defaultColors,
-  style = {},
-  className = '',
-  autoDemo = true,
-  autoSpeed = 0.2,
-  autoIntensity = 2,
-  takeoverDuration = 0.25,
-  autoResumeDelay = 500,
-  autoRampDuration = 0.6,
-}: LiquidEtherProps): React.ReactElement {
+export default function LiquidBackground(): React.ReactElement {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const webglRef = useRef<LiquidEtherWebGL | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);

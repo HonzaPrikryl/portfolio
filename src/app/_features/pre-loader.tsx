@@ -19,7 +19,7 @@ export const Preloader = () => {
       variants={slideUp}
       initial="initial"
       exit="exit"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black text-white"
+      className="fixed inset-0 z-50 flex items-center justify-center"
     >
       <LoadingCount className="text-5xl" to={100} />
     </motion.div>

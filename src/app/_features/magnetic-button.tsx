@@ -2,11 +2,18 @@
 
 import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ArrowDown } from 'lucide-react';
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
+import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 
-export const MagneticButton = () => {
+interface Props {
+  isText?: boolean;
+  text?: string;
+}
+
+export const MagneticButton = ({ isText, text }: Props) => {
   const ref = useRef<HTMLButtonElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const { setCursorVariant } = useCursor();
 
   const MAX_TRANSLATE = 100;
 
@@ -29,6 +36,7 @@ export const MagneticButton = () => {
   const arrowY = useTransform([mainY, duplicateY], ([y1, y2]: number[]) => (y1 + y2) / 2);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setCursorVariant(CursorVariant.NONE);
     if (!ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const x = e.clientX - (left + width / 2);
@@ -40,6 +48,7 @@ export const MagneticButton = () => {
   };
 
   const handleMouseLeave = () => {
+    setCursorVariant(CursorVariant.DEFAULT);
     mouseX.set(0);
     mouseY.set(0);
   };
@@ -51,7 +60,7 @@ export const MagneticButton = () => {
       onMouseLeave={handleMouseLeave}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="relative flex h-48 w-48 items-center justify-center rounded-full"
+      className="relative flex h-36 w-36 items-center justify-center rounded-full 2xl:h-48 2xl:w-48"
     >
       <motion.div style={{ x: mainX, y: mainY }} className="absolute inset-0 rounded-full border" />
 
@@ -63,7 +72,27 @@ export const MagneticButton = () => {
       />
 
       <motion.div style={{ x: arrowX, y: arrowY }}>
-        <ArrowDown size={64} />
+        {!isText ? (
+          <>
+            <div className="block cursor-pointer md:hidden">
+              <ArrowDown size={48} />
+            </div>
+            <div className="hidden cursor-pointer md:block">
+              <ArrowDown size={64} />
+            </div>
+          </>
+        ) : isHovered ? (
+          <>
+            <div className="block cursor-pointer md:hidden">
+              <ArrowUpRight size={48} />
+            </div>
+            <div className="hidden cursor-pointer md:block">
+              <ArrowUpRight size={64} />
+            </div>
+          </>
+        ) : (
+          <p className="text-sm font-light text-white uppercase">{text}</p>
+        )}
       </motion.div>
     </motion.button>
   );

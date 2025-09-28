@@ -5,6 +5,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
+import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 
 const buttonVariants = cva(
   'group relative inline-flex items-center justify-center overflow-hidden whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:cursor-pointer',
@@ -46,9 +47,16 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
+    const { setCursorVariant } = useCursor();
     const Comp = asChild ? Slot : 'button';
     return (
-      <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+        onMouseEnter={() => setCursorVariant(CursorVariant.HOVER)}
+        onMouseLeave={() => setCursorVariant(CursorVariant.DEFAULT)}
+      >
         <span className="relative z-10">{children}</span>
       </Comp>
     );

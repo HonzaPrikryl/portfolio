@@ -2,13 +2,15 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { fadeInUp } from '@/lib/utils';
 
 interface Props {
   text: string;
   className?: string;
+  isInView?: boolean;
 }
 
-export const TextScrollAnimation = ({ text, className = '' }: Props) => {
+export const TextScrollAnimation = ({ text, className = '', isInView = false }: Props) => {
   const ref = useRef<HTMLParagraphElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -20,8 +22,12 @@ export const TextScrollAnimation = ({ text, className = '' }: Props) => {
   let characterOffset = 0;
 
   return (
-    <p
+    <motion.p
       ref={ref}
+      variants={fadeInUp}
+      custom={0.5}
+      animate={isInView ? 'animate' : 'initial'}
+      initial="initial"
       className={`flex flex-wrap ${className}`}
       style={{
         lineHeight: '2',
@@ -50,6 +56,6 @@ export const TextScrollAnimation = ({ text, className = '' }: Props) => {
 
         return wordElement;
       })}
-    </p>
+    </motion.p>
   );
 };
