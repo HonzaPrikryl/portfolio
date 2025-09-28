@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { motion, Transition } from 'framer-motion';
-import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
+import { useCursor } from '@/lib/context/cursor-context';
 import { ArrowUpRight } from 'lucide-react';
+import { useIsTouchDevice } from '@/hooks/use-is-touch-device';
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const { cursorVariant } = useCursor();
+  const isTouchDevice = useIsTouchDevice();
 
   useEffect(() => {
     const mouseMove = (e: MouseEvent) => {
@@ -82,8 +84,7 @@ const CustomCursor = () => {
     damping: 40,
   };
 
-  const isNone = cursorVariant === CursorVariant.NONE;
-
+  if (isTouchDevice) return;
   return (
     <>
       <motion.div

@@ -28,12 +28,7 @@ export const TextScrollAnimation = ({ text, className = '', isInView = false }: 
       custom={0.5}
       animate={isInView ? 'animate' : 'initial'}
       initial="initial"
-      className={`flex flex-wrap ${className}`}
-      style={{
-        lineHeight: '2',
-        columnGap: '8px',
-        textTransform: 'uppercase',
-      }}
+      className={`flex flex-wrap gap-x-2 ${className} leading-relaxed normal-case md:leading-loose md:uppercase`}
     >
       {words.map((word, wordIndex) => {
         const wordElement = (

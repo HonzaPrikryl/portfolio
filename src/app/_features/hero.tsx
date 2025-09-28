@@ -10,29 +10,24 @@ interface Props {
   isReady: boolean;
 }
 
-const titleLines = ['REACT', ' / NATIVE', 'DEVELOPER'];
+const titleLines = ['REACT', '/NATIVE', 'DEVELOPER'];
 
 export const Hero = ({ isReady }: Props) => {
   return (
     <div className="flex h-screen flex-col">
       <div className="flex flex-1 items-center justify-center">
-        <div className="grid w-full grid-cols-12 items-start gap-x-8">
-          <div className="col-span-3">
+        <div className="grid w-full grid-cols-12 items-start gap-x-4 md:gap-x-8">
+          <div className="col-span-3 lg:pl-9">
             <PaginationNumber isReady={isReady} currentPage={1} />
           </div>
-          <div className="col-span-6">
-            <div className="text-center">
-              <div className="text-[10vw] leading-none font-bold tracking-tighter md:text-[8vw] lg:text-[7vw]">
-                {titleLines.map((line, index) => (
-                  <div key={index} className="overflow-hidden">
-                    <AnimatedText text={line} isReady={isReady} delay={index * 0.2} />
-                  </div>
-                ))}
-              </div>
+          <div className="col-span-9 lg:col-span-6">
+            <div className="text-[10vw] leading-[0.8] font-bold tracking-tighter md:text-[8vw] lg:text-[7vw]">
+              {titleLines.map((line, index) => (
+                <AnimatedText key={index} text={line} isReady={isReady} delay={index * 0.2} />
+              ))}
             </div>
           </div>
-
-          <div className="col-span-3" />
+          <div className="hidden lg:col-span-3 lg:block" />
         </div>
       </div>
       <motion.div

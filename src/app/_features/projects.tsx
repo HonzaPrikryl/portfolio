@@ -23,7 +23,7 @@ const projects = [
   },
   {
     id: 3,
-    title: 'Iportal Revisio',
+    title: 'iPortal Revisio',
     category: 'Native Development',
     imageUrl: '/project-iportal.png',
     href: 'https://apps.apple.com/cz/app/iportal-revisio/id6745760589',
@@ -47,7 +47,7 @@ export const Projects = () => {
         custom={0.2}
         animate={isProjectsInView ? 'animate' : 'initial'}
       >
-        <h1 className="text-5xl font-bold tracking-tighter md:text-7xl">Featured Projects</h1>
+        <h1 className="text-4xl font-bold tracking-tighter md:text-7xl">Featured Projects</h1>
         <p className="text-lg font-light text-neutral-500 md:text-xl">
           A curated selection of my public-facing work.
         </p>

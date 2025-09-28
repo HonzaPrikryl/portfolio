@@ -1,5 +1,5 @@
 import './globals.css';
-import { SmoothScrollProvider } from '@/lib/context/smooth-scroll-provider';
+import { SmoothScrollProvider } from '@/lib/context/smooth-scroll-context';
 import FuzzyOverlay from '@/app/_features/fuzzy-overlay';
 import { Manrope } from 'next/font/google';
 import LiquidBackground from '@/app/_features/liquid_background';
@@ -18,12 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={manrope.className}>
         <CursorProvider>
           <div className="fixed top-0 left-0 -z-10 h-full w-full">
-            {/* <LiquidBackground /> */}
+            <LiquidBackground />
             <FuzzyOverlay />
           </div>
-          <SmoothScrollProvider>
-            <div className="px-12">{children}</div>
-          </SmoothScrollProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
           <CustomCursor />
         </CursorProvider>
       </body>

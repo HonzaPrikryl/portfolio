@@ -94,16 +94,9 @@ export const ProjectLink = ({ title, category, imageUrl, href }: ProjectLinkProp
         alt={`Project image for ${title}`}
       />
 
-      <motion.div
-        variants={{
-          initial: { x: '25%', opacity: 0 },
-          whileHover: { x: '0%', opacity: 1 },
-        }}
-        transition={{ type: 'spring' }}
-        className="relative z-10"
-      >
-        <ArrowUpRight className="h-10 w-10 rotate-45 text-neutral-50" />
-      </motion.div>
+      <div className="relative z-10 translate-x-0 opacity-100 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 md:translate-x-4 lg:opacity-0">
+        <ArrowUpRight className="h-8 w-8 text-neutral-50 md:h-12 md:w-12" />
+      </div>
     </motion.a>
   );
 };

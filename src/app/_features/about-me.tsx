@@ -12,7 +12,7 @@ import SectionLayout from '@/app/_features/section-layout';
 import { fadeInUp } from '@/lib/utils';
 
 const aboutParagraphs = [
-  "Hi, I'm a developer who loves to create order in the chaos of the digital world. I'm passionate about breaking down complex problems and building them back up into elegant solutions with clean code and a clear structure. My main playground is TypeScript combined with React and React Native, where I focus on crafting modern and smooth user experiences. I'm driven by challenges that force me to think differently. For me, learning new things isn't a chore—it's just how I'm wired.",
+  "Hi, I'm a creative software developer who loves to create order in the chaos of the digital world. I'm passionate about elegant architecture with clean code. My main playground is TypeScript combined with React and React Native, where I focus on crafting modern and smooth user experiences. I'm driven by challenges that force me to think differently.",
 ];
 
 export const AboutMe = () => {
@@ -31,8 +31,8 @@ export const AboutMe = () => {
 
   return (
     <SectionLayout>
-      <div className="flex flex-grow justify-between">
-        <div className="w-full lg:w-7/12">
+      <div className="grid grid-cols-1 items-center gap-y-12 lg:grid-cols-6 lg:gap-x-16">
+        <div className="lg:col-span-4">
           <motion.h2
             variants={fadeInUp}
             initial="initial"
@@ -51,7 +51,7 @@ export const AboutMe = () => {
               <TextScrollAnimation
                 key={index}
                 text={paragraph}
-                className="text-lg font-light text-neutral-300 md:text-xl"
+                className="text-base font-light text-neutral-300 md:text-xl"
                 isInView={isAboutInView}
               />
             ))}
@@ -62,9 +62,8 @@ export const AboutMe = () => {
           variants={fadeInUp}
           initial="initial"
           animate={isAboutInView ? 'animate' : 'initial'}
-          ref={aboutRef}
           custom={0.4}
-          className="mr-16 hidden items-center lg:flex"
+          className="hidden lg:col-span-2 lg:flex lg:justify-center"
         >
           <CircularText text="DETERMINATION • LET'S CONNECT • " />
         </motion.div>
@@ -76,7 +75,7 @@ export const AboutMe = () => {
         initial="initial"
         animate={isSpecializationsInView ? 'animate' : 'initial'}
         custom={0.2}
-        className="rounded-[2em] border border-neutral-200/40"
+        className="mt-4 rounded-[2em] border border-neutral-200/40 lg:mt-24"
       >
         <Specializations isInView={isSpecializationsInView} />
       </motion.div>

@@ -1,20 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  Engine,
-  Render,
-  Runner,
-  World,
-  Bodies,
-  Mouse,
-  MouseConstraint,
-  Events,
-  Query,
-  Body,
-  Composite,
-} from 'matter-js';
+import { Engine, Render, Runner, World, Bodies, Mouse, Events, Body } from 'matter-js';
 import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
+
+interface BodyWithCustomData extends Body {
+  customSize?: number;
+  skillName?: string;
+}
 
 const skills = [
   { name: 'REACT', size: 100 },
@@ -41,12 +34,14 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<Engine | null>(null);
-  const skillBodiesRef = useRef<Body[]>([]);
+  const skillBodiesRef = useRef<BodyWithCustomData[]>([]);
   const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    const baseSize = isMobile ? 65 : 100;
 
     const engine = Engine.create();
     engineRef.current = engine;
@@ -81,11 +76,11 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
     ]);
 
     skillBodiesRef.current = skills.map((skill) => {
-      const radius = skill.size / 2;
-      const x = Math.random() * (width - skill.size) + radius;
+      const radius = baseSize / 2;
+      const x = Math.random() * (width - baseSize) + radius;
       const y = -150 - Math.random() * 200;
 
-      return Bodies.circle(x, y, radius, {
+      const body: BodyWithCustomData = Bodies.circle(x, y, radius, {
         restitution: 0.6,
         friction: 0.2,
         render: {
@@ -94,6 +89,11 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
           lineWidth: 1,
         },
       });
+
+      body.customSize = baseSize;
+      body.skillName = skill.name;
+
+      return body;
     });
 
     const mouseBody = Bodies.circle(-10, -10, 30, {
@@ -110,19 +110,25 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
     Events.on(render, 'afterRender', () => {
       const context = render.context;
       context.save();
-      Composite.allBodies(engine.world).forEach((body) => {
-        const skillIndex = skillBodiesRef.current.findIndex(
-          (skillBody) => skillBody.id === body.id
-        );
-        if (skillIndex !== -1) {
-          const skill = skills[skillIndex];
+      skillBodiesRef.current.forEach((body) => {
+        if (body.customSize && body.skillName) {
           const { x, y } = body.position;
-          const fontSize = skill.size / 4;
-          context.font = `light ${fontSize}px manrope`;
+          const fontSize = body.customSize / 6;
+          context.font = `400 ${fontSize}px manrope`;
           context.fillStyle = '#cfcfcf';
           context.textAlign = 'center';
           context.textBaseline = 'middle';
-          context.fillText(skill.name, x, y);
+          const words = body.skillName.split(' ');
+
+          if (words.length > 1) {
+            const lineHeight = fontSize * 1.1;
+            const startY = y - (lineHeight * (words.length - 1)) / 2;
+            words.forEach((word, index) => {
+              context.fillText(word, x, startY + index * lineHeight);
+            });
+          } else {
+            context.fillText(body.skillName, x, y);
+          }
         }
       });
       context.restore();
@@ -147,7 +153,7 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
     if (isInView && !hasAnimated && engineRef.current) {
       setHasAnimated(true);
 
-      engineRef.current.gravity.y = 0.4;
+      engineRef.current.gravity.y = 0.5;
 
       skillBodiesRef.current.forEach((body, index) => {
         setTimeout(() => {
@@ -161,7 +167,7 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
 
   return (
     <div
-      className="relative mx-auto h-[300px] w-full overflow-hidden rounded-[2em]"
+      className="w-[calc(100vw - 2rem)] relative mx-auto h-[400px] overflow-hidden rounded-[2em]"
       onMouseEnter={() => setCursorVariant(CursorVariant.HOVER)}
       onMouseLeave={() => setCursorVariant(CursorVariant.DEFAULT)}
     >

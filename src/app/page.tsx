@@ -9,6 +9,7 @@ import { Header } from '@/app/_features/header';
 import { Separator } from '@/app/_features/separator';
 import { Projects } from '@/app/_features/projects';
 import { Footer } from '@/app/_features/footer';
+import { Container } from '@/components/ui/container';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +17,10 @@ export default function Home() {
   const [isFooterAnimationComplete, setIsFooterAnimationComplete] = useState(false);
 
   useEffect(() => {
+    if (isLoading) {
+      window.scrollTo(0, 0);
+      document.body.style.overflow = 'hidden';
+    }
     const timer = setTimeout(() => {
       setIsLoading(false);
       document.body.style.overflow = 'auto';
@@ -36,12 +41,18 @@ export default function Home() {
     <main>
       <AnimatePresence>{isLoading && <Preloader key="preloader" />}</AnimatePresence>
       <Header isReady={isReady} isFooterAnimationComplete={isFooterAnimationComplete} />
-      <Hero isReady={isReady} />
-      <Separator isReady={isReady} currentPage={2} totalPages={4} />
-      <AboutMe />
-      <Separator isReady={isReady} currentPage={3} totalPages={4} />
-      <Projects />
-      <Separator isReady={isReady} currentPage={4} totalPages={4} />
+      <Container>
+        <Hero isReady={isReady} />
+        <Separator isReady={isReady} currentPage={2} totalPages={4} />
+        <div id="about-me">
+          <AboutMe />
+        </div>
+        <Separator isReady={isReady} currentPage={3} totalPages={4} />
+        <div id="projects">
+          <Projects />
+        </div>
+        <Separator isReady={isReady} currentPage={4} totalPages={4} />
+      </Container>
       <Footer setIsFooterAnimationComplete={setIsFooterAnimationComplete} />
     </main>
   );

@@ -18,7 +18,7 @@ const PaginationNumber = ({ isReady, currentPage }: Props) => {
       animate={isReady ? 'animate' : 'initial'}
       className="align-start"
     >
-      <div className="text-[1.5em] font-light">{currentPage} // 04 — SCROLL ↓</div>
+      <div className="font-light lg:text-[1.5em]">{currentPage} // 04 — SCROLL ↓</div>
     </motion.div>
   );
 };

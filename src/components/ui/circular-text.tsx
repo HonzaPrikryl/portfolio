@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { motion, useAnimation, useMotionValue, MotionValue } from 'framer-motion';
+import { motion, useAnimation, useMotionValue } from 'framer-motion';
+import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 
 interface CircularTextProps {
   text: string;
@@ -24,6 +25,7 @@ const getTransition = (duration: number, from: number) => ({
 });
 
 const CircularText: React.FC<CircularTextProps> = ({ text, spinDuration = 25, className = '' }) => {
+  const { setCursorVariant } = useCursor();
   const letters = Array.from(text.toUpperCase());
   const controls = useAnimation();
   const rotation = useMotionValue(0);
@@ -39,7 +41,7 @@ const CircularText: React.FC<CircularTextProps> = ({ text, spinDuration = 25, cl
 
   const handleHoverStart = () => {
     const currentRotation = rotation.get();
-
+    setCursorVariant(CursorVariant.TEXT);
     const transitionConfig = getTransition(spinDuration / 4, currentRotation);
     controls.start({
       rotate: currentRotation + 360,
@@ -48,6 +50,7 @@ const CircularText: React.FC<CircularTextProps> = ({ text, spinDuration = 25, cl
   };
 
   const handleHoverEnd = () => {
+    setCursorVariant(CursorVariant.DEFAULT);
     const currentRotation = rotation.get();
     controls.start({
       rotate: currentRotation + 360,

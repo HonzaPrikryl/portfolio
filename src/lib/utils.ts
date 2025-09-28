@@ -21,3 +21,11 @@ export const fadeInUp: Variants = {
     },
   }),
 };
+
+export const socialLinks = [
+  { name: 'GitHub', href: 'https://github.com/HonzaPrikryl' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/janprikryll/' },
+  { name: 'Instagram', href: 'https://www.instagram.com/prikryll_' },
+];
+
+export const mailLink = 'mailto:janprikryl.me@gmail.com';

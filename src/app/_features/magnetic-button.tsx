@@ -4,16 +4,20 @@ import { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
+import { useSmoothScroll } from '@/lib/context/smooth-scroll-context';
+import { mailLink } from '@/lib/utils';
 
 interface Props {
   isText?: boolean;
   text?: string;
+  isMail?: boolean;
 }
 
-export const MagneticButton = ({ isText, text }: Props) => {
+export const MagneticButton = ({ isText, text, isMail }: Props) => {
   const ref = useRef<HTMLButtonElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const { setCursorVariant } = useCursor();
+  const { lenis } = useSmoothScroll();
 
   const MAX_TRANSLATE = 100;
 
@@ -53,6 +57,20 @@ export const MagneticButton = ({ isText, text }: Props) => {
     mouseY.set(0);
   };
 
+  const handleScrollTo = (target: string) => {
+    if (lenis) {
+      lenis.scrollTo(target, { duration: 2 });
+    }
+  };
+
+  const handleOnClick = () => {
+    if (isMail) {
+      window.location.href = mailLink;
+    } else {
+      handleScrollTo('#about-me');
+    }
+  };
+
   return (
     <motion.button
       ref={ref}
@@ -60,7 +78,8 @@ export const MagneticButton = ({ isText, text }: Props) => {
       onMouseLeave={handleMouseLeave}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="relative flex h-36 w-36 items-center justify-center rounded-full 2xl:h-48 2xl:w-48"
+      className="relative flex h-28 w-28 items-center justify-center rounded-full md:h-36 md:w-36 2xl:h-48 2xl:w-48"
+      onClick={handleOnClick}
     >
       <motion.div style={{ x: mainX, y: mainY }} className="absolute inset-0 rounded-full border" />
 

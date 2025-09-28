@@ -28,7 +28,7 @@ export const Separator = ({ isReady, currentPage, totalPages }: Props) => {
       variants={fadeInUp}
       initial="initial"
       animate={isReady ? 'animate' : 'initial'}
-      className="relative z-20 flex w-full items-center justify-center gap-4 text-[1.5em] font-light"
+      className="relative z-20 my-8 flex w-full items-center justify-center gap-4 text-[1em] font-light md:text-[1.5em]"
     >
       <div className="flex items-center gap-2 whitespace-nowrap">
         <span>{formatPageNumber(currentPage)}</span>
