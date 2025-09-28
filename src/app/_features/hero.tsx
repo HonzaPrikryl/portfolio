@@ -21,7 +21,7 @@ export const Hero = ({ isReady }: Props) => {
             <PaginationNumber isReady={isReady} currentPage={1} />
           </div>
           <div className="col-span-9 lg:col-span-6">
-            <div className="text-[10vw] leading-[0.8] font-bold tracking-tighter md:text-[8vw] lg:text-[7vw]">
+            <div className="text-[10vw] leading-[0.75] font-bold tracking-tighter md:text-[8vw] lg:text-[7vw]">
               {titleLines.map((line, index) => (
                 <AnimatedText key={index} text={line} isReady={isReady} delay={index * 0.2} />
               ))}

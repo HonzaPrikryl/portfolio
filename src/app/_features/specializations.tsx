@@ -117,8 +117,8 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
       skillBodiesRef.current.forEach((body) => {
         if (body.customSize && body.skillName) {
           const { x, y } = body.position;
-          const fontSize = body.customSize / 6;
-          context.font = `400 ${fontSize}px manrope`;
+          const fontSize = body.customSize / 7;
+          context.font = `200 ${fontSize}px archivo`;
           context.fillStyle = '#cfcfcf';
           context.textAlign = 'center';
           context.textBaseline = 'middle';

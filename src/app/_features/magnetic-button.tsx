@@ -59,7 +59,7 @@ export const MagneticButton = ({ isText, text, isMail }: Props) => {
 
   const handleScrollTo = (target: string) => {
     if (lenis) {
-      lenis.scrollTo(target, { duration: 2 });
+      lenis.scrollTo(target, { duration: 4 });
     }
   };
 
