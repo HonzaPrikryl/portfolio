@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Engine, Render, Runner, World, Bodies, Mouse, Events, Body } from 'matter-js';
 import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
+import { ContainerFitText } from '@/app/_features/container-fit-text';
 
 interface BodyWithCustomData extends Body {
   customSize?: number;
@@ -27,6 +28,9 @@ const skills = [
   { name: 'INERTIA JS', size: 100 },
   { name: 'DOCKER', size: 100 },
   { name: 'GIT', size: 100 },
+  { name: 'NODE JS', size: 100 },
+  { name: 'REST API', size: 100 },
+  { name: 'OPENLAYERS', size: 100 },
 ];
 
 export const Specializations = ({ isInView }: { isInView: boolean }) => {
@@ -172,7 +176,7 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
       onMouseLeave={() => setCursorVariant(CursorVariant.DEFAULT)}
     >
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <h2 className="text-7xl text-neutral-900 uppercase md:text-[12em]">Tech Stack</h2>
+        <ContainerFitText className="text-neutral-900">Tech Stack</ContainerFitText>
       </div>
       <div ref={containerRef} className="absolute inset-0" />
     </div>

@@ -74,7 +74,7 @@ export const Footer = ({ setIsFooterAnimationComplete }: Props) => {
         <motion.footer
           id="contact"
           style={{ opacity: footerSocialsOpacity }}
-          className="absolute bottom-0 left-0 w-full"
+          className="absolute bottom-10 left-0 w-full"
         >
           <div className="mx-[4%] flex items-center justify-center text-neutral-400 md:justify-between">
             <span className="hidden text-xl sm:block">FEEL FREE TO CONNECT WITH ME ON SOCIAL</span>
