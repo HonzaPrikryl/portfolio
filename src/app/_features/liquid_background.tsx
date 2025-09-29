@@ -31,21 +31,21 @@ interface LiquidEtherWebGL {
   dispose: () => void;
 }
 
-const mouseForce = 40;
+const mouseForce = 20;
 const cursorSize = 100;
 const isViscous = false;
 const viscous = 30;
-const iterationsViscous = 64;
-const iterationsPoisson = 64;
-const dt = 0.014;
+const iterationsViscous = 8;
+const iterationsPoisson = 8;
+const dt = 0.012;
 const BFECC = true;
-const resolution = 0.5;
-const isBounce = true;
+const resolution = 0.3;
+const isBounce = false;
 const colors = ['#FFF', '#FFF', '#FFF'];
 const style = {};
 const className = '';
 const autoDemo = true;
-const autoSpeed = 0.2;
+const autoSpeed = 0.15;
 const autoIntensity = 2;
 const takeoverDuration = 0.25;
 const autoResumeDelay = 500;
