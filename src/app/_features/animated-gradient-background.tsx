@@ -60,12 +60,11 @@ const fragmentShader = `
   }
 
   void main() {
-    vec2 st = vUv;
+    vec2 st = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);
 
     float time = u_time * 0.2;
-
     float noise1 = fbm(st * 1.5 + vec2(time * 0.1, time * 0.2));
-    float noise2 = fbm(st * 2.5 + vec2(-time * 0.15, time * 0.1));
+    float noise2 = fbm(st * 2.5 + vec2(-time * 0.4, time * 0.1));
     float noise3 = fbm(st * 3.5 + vec2(time * 0.05, -time * 0.08));
 
     float combinedNoise = (noise1 + noise2 + noise3) / 3.0;
@@ -101,7 +100,6 @@ const AnimatedGradientBackground: React.FC = () => {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
     const clock = new THREE.Clock();
@@ -109,20 +107,27 @@ const AnimatedGradientBackground: React.FC = () => {
     const geometry = new THREE.PlaneGeometry(2, 2);
     const uniforms = {
       u_time: { value: 0.0 },
-      u_resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+      u_resolution: { value: new THREE.Vector2() },
       u_color1: { value: colors.color1 },
       u_color2: { value: colors.color2 },
       u_color3: { value: colors.color3 },
     };
 
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms,
-    });
-
+    const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
+
+    const handleResize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      renderer.setSize(width, height);
+      uniforms.u_resolution.value.set(width, height);
+      renderer.render(scene, camera);
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
 
     const animate = () => {
       uniforms.u_time.value = clock.getElapsedTime();
@@ -132,21 +137,10 @@ const AnimatedGradientBackground: React.FC = () => {
 
     animate();
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries || entries.length === 0) {
-        return;
-      }
-
-      const { clientWidth, clientHeight } = container;
-      renderer.setSize(clientWidth, clientHeight);
-      uniforms.u_resolution.value.set(clientWidth, clientHeight);
-    });
-
-    resizeObserver.observe(container);
-
     return () => {
       cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
