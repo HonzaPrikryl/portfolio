@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={archivo.className}>
         <CursorProvider>
-          <div className="fixed top-0 left-0 -z-10 h-full w-full">
+          <div className="fixed top-0 left-0 -z-10 h-dvh w-full">
             <AnimatedGradientBackground />
             <FuzzyOverlay />
           </div>
