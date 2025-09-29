@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Engine, Render, Runner, World, Bodies, Mouse, Events, Body } from 'matter-js';
 import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 import { ContainerFitText } from '@/app/_features/container-fit-text';
+import ShinyText from '@/components/ui/shiny-text';
 
 interface BodyWithCustomData extends Body {
   customSize?: number;
@@ -176,7 +177,9 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
       onMouseLeave={() => setCursorVariant(CursorVariant.DEFAULT)}
     >
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <ContainerFitText className="text-neutral-900">Tech Stack</ContainerFitText>
+        <ContainerFitText className="text-neutral-900">
+          <ShinyText text="Tech Stack" />
+        </ContainerFitText>
       </div>
       <div ref={containerRef} className="absolute inset-0" />
     </div>
