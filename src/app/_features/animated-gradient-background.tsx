@@ -130,6 +130,11 @@ const AnimatedGradientBackground: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     const animate = () => {
+      const canvas = renderer.domElement;
+      if (canvas.width !== container.clientWidth || canvas.height !== container.clientHeight) {
+        renderer.setSize(container.clientWidth, container.clientHeight, false);
+        uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
+      }
       uniforms.u_time.value = clock.getElapsedTime();
       renderer.render(scene, camera);
       animationFrameId = requestAnimationFrame(animate);
@@ -139,7 +144,6 @@ const AnimatedGradientBackground: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', handleResize);
 
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
