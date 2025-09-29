@@ -61,7 +61,6 @@ const fragmentShader = `
 
   void main() {
     vec2 st = vUv;
-    st.x *= u_resolution.x / u_resolution.y;
 
     float time = u_time * 0.2;
 
@@ -101,7 +100,7 @@ const AnimatedGradientBackground: React.FC = () => {
     camera.position.z = 1;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
