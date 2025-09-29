@@ -130,18 +130,23 @@ const AnimatedGradientBackground: React.FC = () => {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    const handleResize = () => {
+    animate();
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (!entries || entries.length === 0) {
+        return;
+      }
+
       const { clientWidth, clientHeight } = container;
       renderer.setSize(clientWidth, clientHeight);
       uniforms.u_resolution.value.set(clientWidth, clientHeight);
-    };
+    });
 
-    animate();
-    window.addEventListener('resize', handleResize);
+    resizeObserver.observe(container);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);
       }
@@ -154,7 +159,7 @@ const AnimatedGradientBackground: React.FC = () => {
   return (
     <div
       ref={mountRef}
-      className="pointer-events-none absolute top-0 left-0 h-full w-full touch-none overflow-hidden"
+      className="canvas-cover pointer-events-none absolute top-0 left-0 h-full w-full touch-none overflow-hidden"
     />
   );
 };
