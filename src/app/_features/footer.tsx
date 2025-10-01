@@ -60,7 +60,7 @@ export const Footer = ({ setIsFooterAnimationComplete }: Props) => {
             <ShinyText text="LET'S CONNECT" />
           </h1>
           <motion.div style={{ opacity: mainOpacity }}>
-            <MagneticButton isText isMail text="WRITE A MESSAGE" />
+            <p className="text-xl text-neutral-300 uppercase">janprikryl.me@gmail.com</p>
           </motion.div>
         </motion.div>
 
@@ -80,11 +80,11 @@ export const Footer = ({ setIsFooterAnimationComplete }: Props) => {
             <span className="hidden text-xl sm:block">FEEL FREE TO CONNECT WITH ME ON SOCIAL</span>
             <div className="flex items-center gap-8">
               {socialLinks.map((link) => (
-                <Button variant="outline" size="sm" key={link.name} className="uppercase">
-                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                <a href={link.href} target="_blank" rel="noopener noreferrer" key={link.name}>
+                  <Button variant="outline" size="sm" className="uppercase">
                     {link.name}
-                  </a>
-                </Button>
+                  </Button>
+                </a>
               ))}
             </div>
           </div>

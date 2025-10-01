@@ -6,9 +6,18 @@ import { CursorProvider } from '@/lib/context/cursor-context';
 import CustomCursor from '@/components/ui/custom-cursor';
 import { Metadata } from 'next';
 import AnimatedGradientBackground from '@/app/_features/animated-gradient-background';
+import { Viewport } from 'next';
 
 export const metadata: Metadata = {
   title: 'Honza Přikryl | React Developer',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 const archivo = Archivo({
@@ -22,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={archivo.className}>
         <CursorProvider>
-          <div className="fixed top-0 left-0 -z-10 h-dvh w-full">
+          <div className="fixed top-0 left-0 -z-10 h-screen w-screen">
             <AnimatedGradientBackground />
             <FuzzyOverlay />
           </div>

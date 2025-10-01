@@ -81,6 +81,10 @@ const fragmentShader = `
 
 const AnimatedGradientBackground: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const uniformsRef = useRef<any>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
 
   const colors = {
     color1: new THREE.Color('#000'),
@@ -93,14 +97,26 @@ const AnimatedGradientBackground: React.FC = () => {
 
     const container = mountRef.current;
     let animationFrameId: number;
+    let resizeTimeoutId: NodeJS.Timeout;
 
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
     camera.position.z = 1;
+    cameraRef.current = camera;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false,
+    });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
+
+    const canvas = renderer.domElement;
+    canvas.style.display = 'block';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    container.appendChild(canvas);
 
     const clock = new THREE.Clock();
 
@@ -112,31 +128,57 @@ const AnimatedGradientBackground: React.FC = () => {
       u_color2: { value: colors.color2 },
       u_color3: { value: colors.color3 },
     };
+    uniformsRef.current = uniforms;
 
-    const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
+    const material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms,
+    });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    const handleResize = () => {
+    const updateSize = () => {
+      if (!rendererRef.current || !uniformsRef.current) return;
+
       const width = window.innerWidth;
       const height = window.innerHeight;
-      renderer.setSize(width, height);
-      uniforms.u_resolution.value.set(width, height);
-      renderer.render(scene, camera);
+
+      rendererRef.current.setSize(width, height, false);
+      uniformsRef.current.u_resolution.value.set(width, height);
     };
 
-    handleResize();
+    const handleResize = () => {
+      updateSize();
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+      }
+    };
 
-    window.addEventListener('resize', handleResize);
+    const handleVisualViewportResize = () => {
+      clearTimeout(resizeTimeoutId);
+      resizeTimeoutId = setTimeout(handleResize, 0);
+    };
+
+    updateSize();
+
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleVisualViewportResize, {
+        passive: true,
+      });
+      window.visualViewport.addEventListener('scroll', handleVisualViewportResize, {
+        passive: true,
+      });
+    }
 
     const animate = () => {
-      const canvas = renderer.domElement;
-      if (canvas.width !== container.clientWidth || canvas.height !== container.clientHeight) {
-        renderer.setSize(container.clientWidth, container.clientHeight, false);
-        uniforms.u_resolution.value.set(container.clientWidth, container.clientHeight);
+      if (!uniformsRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current) {
+        return;
       }
-      uniforms.u_time.value = clock.getElapsedTime();
-      renderer.render(scene, camera);
+      uniformsRef.current.u_time.value = clock.getElapsedTime();
+      rendererRef.current.render(sceneRef.current, cameraRef.current);
       animationFrameId = requestAnimationFrame(animate);
     };
 
@@ -144,22 +186,30 @@ const AnimatedGradientBackground: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      clearTimeout(resizeTimeoutId);
 
-      if (container && renderer.domElement) {
-        container.removeChild(renderer.domElement);
+      window.removeEventListener('resize', handleResize);
+
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleVisualViewportResize);
+        window.visualViewport.removeEventListener('scroll', handleVisualViewportResize);
+      }
+
+      if (container && canvas && container.contains(canvas)) {
+        container.removeChild(canvas);
       }
       geometry.dispose();
       material.dispose();
       renderer.dispose();
+
+      rendererRef.current = null;
+      uniformsRef.current = null;
+      sceneRef.current = null;
+      cameraRef.current = null;
     };
   }, []);
 
-  return (
-    <div
-      ref={mountRef}
-      className="canvas-cover pointer-events-none absolute top-0 left-0 h-full w-full touch-none overflow-hidden"
-    />
-  );
+  return <div ref={mountRef} className="canvas-cover" />;
 };
 
 export default AnimatedGradientBackground;

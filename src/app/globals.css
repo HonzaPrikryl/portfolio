@@ -59,10 +59,22 @@ body {
   cursor: none;
 }
 
+.canvas-cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .canvas-cover canvas {
-  width: 100%;
-  height: 100%;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
   object-fit: cover;
+  object-position: center;
 }
 
 :root {
