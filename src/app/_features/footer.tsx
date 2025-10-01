@@ -60,7 +60,7 @@ export const Footer = ({ setIsFooterAnimationComplete }: Props) => {
             <ShinyText text="LET'S CONNECT" />
           </h1>
           <motion.div style={{ opacity: mainOpacity }}>
-            <p className="text-xl text-neutral-300 uppercase">janprikryl.me@gmail.com</p>
+            <p className="text-xl text-neutral-300">janprikryl.me@gmail.com</p>
           </motion.div>
         </motion.div>
 
