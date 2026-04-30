@@ -3,7 +3,6 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValueEvent, useScroll, useTransform } from 'framer-motion';
 import { socialLinks } from '@/lib/utils';
-import { MagneticButton } from '@/app/_features/magnetic-button';
 import { Button } from '@/components/ui/button';
 import ShinyText from '@/components/ui/shiny-text';
 

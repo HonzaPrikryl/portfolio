@@ -4,6 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { fadeInUp } from '@/lib/utils';
+import Image from 'next/image';
 
 interface ProjectLinkProps {
   title: string;
@@ -82,17 +83,23 @@ export const ProjectLink = ({ title, category, imageUrl, href }: ProjectLinkProp
         </span>
       </div>
 
-      <motion.img
+      <motion.div
         style={{ top, left, rotate, translateX: '-50%', translateY: '-50%' }}
         variants={{
           initial: { scale: 0, opacity: 0 },
           whileHover: { scale: 1, opacity: 1 },
         }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-        src={imageUrl}
-        className="pointer-events-none absolute z-0 h-40 w-56 rounded-lg object-cover md:h-48 md:w-64"
-        alt={`Project image for ${title}`}
-      />
+        className="pointer-events-none absolute z-0 h-40 w-56 overflow-hidden rounded-lg md:h-48 md:w-64"
+      >
+        <Image
+          src={imageUrl}
+          alt={`Project image for ${title}`}
+          fill
+          sizes="(min-width: 768px) 256px, 224px"
+          className="object-cover"
+        />
+      </motion.div>
 
       <div className="relative z-10 translate-x-0 opacity-100 transition-all duration-300 ease-in-out group-hover:translate-x-0 group-hover:opacity-100 md:translate-x-4 lg:opacity-0">
         <ArrowUpRight className="h-8 w-8 text-neutral-50 md:h-12 md:w-12" />

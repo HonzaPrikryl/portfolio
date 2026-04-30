@@ -9,20 +9,27 @@ import { useRef } from 'react';
 const projects = [
   {
     id: 1,
+    title: 'Vision',
+    category: 'Web Development',
+    imageUrl: '/project-vision.png',
+    href: 'https://vision.hardmin.com',
+  },
+  {
+    id: 2,
     title: 'Hardmin',
     category: 'Web Development',
     imageUrl: '/project-hardmin.png',
     href: 'https://hardmin.com/',
   },
   {
-    id: 2,
+    id: 3,
     title: 'Metronome Prague',
     category: 'Web / Native Development',
     imageUrl: '/project-metronome.png',
     href: 'https://www.metronome.cz/en',
   },
   {
-    id: 3,
+    id: 4,
     title: 'iPortal Revisio',
     category: 'Native Development',
     imageUrl: '/project-iportal.png',

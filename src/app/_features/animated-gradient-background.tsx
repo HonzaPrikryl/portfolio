@@ -3,6 +3,23 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
+type GradientUniforms = {
+  u_time: { value: number };
+  u_resolution: { value: THREE.Vector2 };
+  u_color1: { value: THREE.Color };
+  u_color2: { value: THREE.Color };
+  u_color3: { value: THREE.Color };
+};
+
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
+const MAX_PIXEL_RATIO = 1.25;
+const colors = {
+  color1: new THREE.Color('#000'),
+  color2: new THREE.Color('#7d807d'),
+  color3: new THREE.Color('#fff'),
+};
+
 const vertexShader = `
   varying vec2 vUv;
   void main() {
@@ -12,7 +29,7 @@ const vertexShader = `
 `;
 
 const fragmentShader = `
-  precision highp float;
+  precision mediump float;
   varying vec2 vUv;
 
   uniform float u_time;
@@ -51,7 +68,7 @@ const fragmentShader = `
   float fbm(vec2 st) {
       float value = 0.0;
       float amplitude = .5;
-      for (int i = 0; i < 6; i++) {
+      for (int i = 0; i < 4; i++) {
           value += amplitude * snoise(st);
           st *= 2.;
           amplitude *= .5;
@@ -82,15 +99,9 @@ const fragmentShader = `
 const AnimatedGradientBackground: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const uniformsRef = useRef<any>(null);
+  const uniformsRef = useRef<GradientUniforms | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
-
-  const colors = {
-    color1: new THREE.Color('#000'),
-    color2: new THREE.Color('#7d807d'),
-    color3: new THREE.Color('#fff'),
-  };
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -98,6 +109,8 @@ const AnimatedGradientBackground: React.FC = () => {
     const container = mountRef.current;
     let animationFrameId: number;
     let resizeTimeoutId: NodeJS.Timeout;
+    let lastFrameTime = 0;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -106,10 +119,11 @@ const AnimatedGradientBackground: React.FC = () => {
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias: false,
       alpha: false,
+      powerPreference: 'low-power',
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
     rendererRef.current = renderer;
 
     const canvas = renderer.domElement;
@@ -121,7 +135,7 @@ const AnimatedGradientBackground: React.FC = () => {
     const clock = new THREE.Clock();
 
     const geometry = new THREE.PlaneGeometry(2, 2);
-    const uniforms = {
+    const uniforms: GradientUniforms = {
       u_time: { value: 0.0 },
       u_resolution: { value: new THREE.Vector2() },
       u_color1: { value: colors.color1 },
@@ -144,6 +158,7 @@ const AnimatedGradientBackground: React.FC = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
 
+      rendererRef.current.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
       rendererRef.current.setSize(width, height, false);
       uniformsRef.current.u_resolution.value.set(width, height);
     };
@@ -173,22 +188,50 @@ const AnimatedGradientBackground: React.FC = () => {
       });
     }
 
-    const animate = () => {
+    const renderFrame = () => {
       if (!uniformsRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current) {
         return;
       }
+
       uniformsRef.current.u_time.value = clock.getElapsedTime();
       rendererRef.current.render(sceneRef.current, cameraRef.current);
+    };
+
+    const animate = (time: number) => {
+      if (document.hidden) {
+        animationFrameId = requestAnimationFrame(animate);
+        return;
+      }
+
+      if (time - lastFrameTime >= FRAME_INTERVAL) {
+        lastFrameTime = time;
+        renderFrame();
+      }
+
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate();
+    renderFrame();
+
+    if (!prefersReducedMotion) {
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        clock.start();
+        renderFrame();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       clearTimeout(resizeTimeoutId);
 
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
 
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', handleVisualViewportResize);

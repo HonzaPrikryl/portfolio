@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, type MotionValue, useScroll, useTransform } from 'framer-motion';
 import { fadeInUp } from '@/lib/utils';
 
 interface Props {
@@ -9,6 +9,22 @@ interface Props {
   className?: string;
   isInView?: boolean;
 }
+
+const AnimatedCharacter = ({
+  character,
+  end,
+  progress,
+  start,
+}: {
+  character: string;
+  end: number;
+  progress: MotionValue<number>;
+  start: number;
+}) => {
+  const opacity = useTransform(progress, [start, end], [0.15, 1]);
+
+  return <motion.span style={{ opacity }}>{character}</motion.span>;
+};
 
 export const TextScrollAnimation = ({ text, className = '', isInView = false }: Props) => {
   const ref = useRef<HTMLParagraphElement>(null);
@@ -37,12 +53,15 @@ export const TextScrollAnimation = ({ text, className = '', isInView = false }: 
               const i = characterOffset + charIndex;
               const start = i / totalCharacters;
               const end = start + 1 / totalCharacters;
-              const opacity = useTransform(scrollYProgress, [start, end], [0.15, 1]);
 
               return (
-                <motion.span key={charIndex} style={{ opacity }}>
-                  {char}
-                </motion.span>
+                <AnimatedCharacter
+                  key={charIndex}
+                  character={char}
+                  end={end}
+                  progress={scrollYProgress}
+                  start={start}
+                />
               );
             })}
           </span>

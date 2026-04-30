@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Engine, Render, Runner, World, Bodies, Mouse, Events, Body } from 'matter-js';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { Engine, Render, Runner, World, Bodies, Events, Body } from 'matter-js';
 import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 import { ContainerFitText } from '@/app/_features/container-fit-text';
 import ShinyText from '@/components/ui/shiny-text';
@@ -10,6 +10,20 @@ interface BodyWithCustomData extends Body {
   customSize?: number;
   skillName?: string;
 }
+
+const HOVER_CURSOR_RADIUS = 32;
+const CURSOR_BODY_EASING = 0.35;
+const OFFSCREEN_POINTER_POSITION = { x: -1000, y: -1000 };
+
+const setBodyPosition = (body: Body, position: { x: number; y: number }, updateVelocity = false) => {
+  const setPosition = Body.setPosition as unknown as (
+    targetBody: Body,
+    targetPosition: { x: number; y: number },
+    shouldUpdateVelocity?: boolean
+  ) => void;
+
+  setPosition(body, position, updateVelocity);
+};
 
 const skills = [
   { name: 'REACT', size: 100 },
@@ -39,8 +53,49 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const engineRef = useRef<Engine | null>(null);
+  const runnerRef = useRef<Runner | null>(null);
+  const renderRef = useRef<Render | null>(null);
+  const cursorBodyRef = useRef<Body | null>(null);
+  const pointerRef = useRef({ ...OFFSCREEN_POINTER_POSITION, isInside: false });
   const skillBodiesRef = useRef<BodyWithCustomData[]>([]);
+  const spawnTimeoutsRef = useRef<number[]>([]);
   const [hasAnimated, setHasAnimated] = useState(false);
+
+  const updatePointerPosition = (event: PointerEvent<HTMLDivElement>) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    pointerRef.current = {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+      isInside: true,
+    };
+  };
+
+  const handlePointerEnter = (event: PointerEvent<HTMLDivElement>) => {
+    setCursorVariant(CursorVariant.HOVER);
+    updatePointerPosition(event);
+
+    if (cursorBodyRef.current) {
+      setBodyPosition(cursorBodyRef.current, pointerRef.current);
+      Body.setVelocity(cursorBodyRef.current, { x: 0, y: 0 });
+    }
+  };
+
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    updatePointerPosition(event);
+  };
+
+  const handlePointerLeave = () => {
+    setCursorVariant(CursorVariant.DEFAULT);
+    pointerRef.current = { ...OFFSCREEN_POINTER_POSITION, isInside: false };
+
+    if (cursorBodyRef.current) {
+      setBodyPosition(cursorBodyRef.current, OFFSCREEN_POINTER_POSITION);
+      Body.setVelocity(cursorBodyRef.current, { x: 0, y: 0 });
+    }
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -53,9 +108,8 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    (engine.timing as any).substeps = 5;
-    engine.positionIterations = 12;
-    engine.velocityIterations = 10;
+    engine.positionIterations = 8;
+    engine.velocityIterations = 6;
     engine.gravity.y = 0;
 
     const render = Render.create({
@@ -66,11 +120,12 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
         height,
         wireframes: false,
         background: 'transparent',
-        pixelRatio: window.devicePixelRatio || 1,
+        pixelRatio: Math.min(window.devicePixelRatio || 1, 1.25),
       },
     });
 
     canvasRef.current = render.canvas;
+    renderRef.current = render;
 
     const wallOptions = { isStatic: true, render: { visible: false } };
     World.add(engine.world, [
@@ -101,15 +156,27 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
       return body;
     });
 
-    const mouseBody = Bodies.circle(-10, -10, 30, {
-      isStatic: true,
-      render: { visible: false },
-    });
-    World.add(engine.world, mouseBody);
+    const cursorBody = Bodies.circle(
+      OFFSCREEN_POINTER_POSITION.x,
+      OFFSCREEN_POINTER_POSITION.y,
+      HOVER_CURSOR_RADIUS,
+      {
+        isStatic: true,
+        render: { visible: false },
+      }
+    );
+    cursorBodyRef.current = cursorBody;
+    World.add(engine.world, cursorBody);
 
-    const mouse = Mouse.create(render.canvas);
     Events.on(engine, 'beforeUpdate', () => {
-      Body.setPosition(mouseBody, mouse.position);
+      if (!pointerRef.current.isInside) return;
+
+      const nextPosition = {
+        x: cursorBody.position.x + (pointerRef.current.x - cursorBody.position.x) * CURSOR_BODY_EASING,
+        y: cursorBody.position.y + (pointerRef.current.y - cursorBody.position.y) * CURSOR_BODY_EASING,
+      };
+
+      setBodyPosition(cursorBody, nextPosition, true);
     });
 
     Events.on(render, 'afterRender', () => {
@@ -140,41 +207,62 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
     });
 
     const runner = Runner.create();
+    runnerRef.current = runner;
     Render.run(render);
-    Runner.run(runner, engine);
 
     return () => {
+      spawnTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      spawnTimeoutsRef.current = [];
       Runner.stop(runner);
       Render.stop(render);
       World.clear(engine.world, false);
       Engine.clear(engine);
+      render.canvas.remove();
+      render.textures = {};
       if (canvasRef.current) {
         canvasRef.current.remove();
       }
+      engineRef.current = null;
+      runnerRef.current = null;
+      renderRef.current = null;
+      cursorBodyRef.current = null;
     };
   }, []);
 
   useEffect(() => {
-    if (isInView && !hasAnimated && engineRef.current) {
+    const engine = engineRef.current;
+    const runner = runnerRef.current;
+
+    if (!engine || !runner) return;
+
+    if (isInView) {
+      Runner.run(runner, engine);
+    } else {
+      Runner.stop(runner);
+    }
+
+    if (isInView && !hasAnimated) {
       setHasAnimated(true);
 
-      engineRef.current.gravity.y = 0.5;
+      engine.gravity.y = 0.5;
 
       skillBodiesRef.current.forEach((body, index) => {
-        setTimeout(() => {
+        const timeoutId = window.setTimeout(() => {
           if (engineRef.current) {
             World.add(engineRef.current.world, body);
           }
         }, index * 100);
+        spawnTimeoutsRef.current.push(timeoutId);
       });
     }
   }, [isInView, hasAnimated]);
 
   return (
     <div
-      className="w-[calc(100vw - 2rem)] relative mx-auto h-[400px] overflow-hidden rounded-[2em]"
-      onMouseEnter={() => setCursorVariant(CursorVariant.HOVER)}
-      onMouseLeave={() => setCursorVariant(CursorVariant.DEFAULT)}
+      className="relative h-[400px] w-full overflow-hidden rounded-[2em]"
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      onPointerMove={handlePointerMove}
     >
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <ContainerFitText className="text-neutral-900">

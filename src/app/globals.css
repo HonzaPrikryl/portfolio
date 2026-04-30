@@ -53,10 +53,14 @@ html {
 
 body {
   overflow: hidden;
-  cursor: none;
   background-color: black;
   color: white;
-  cursor: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
 }
 
 .canvas-cover {

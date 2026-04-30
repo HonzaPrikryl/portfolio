@@ -1,15 +1,24 @@
 'use client';
 
-import { useRef } from 'react';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 
 import CircularText from '@/components/ui/circular-text';
 import { TextScrollAnimation } from '@/app/_features/text-scroll-animation';
-import PaginationNumber from '@/app/_features/pagination-number';
-import { Specializations } from '@/app/_features/specializations';
 import { CursorVariant, useCursor } from '@/lib/context/cursor-context';
 import SectionLayout from '@/app/_features/section-layout';
 import { fadeInUp } from '@/lib/utils';
+
+const Specializations = dynamic(
+  () => import('@/app/_features/specializations').then((mod) => mod.Specializations),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="relative h-[400px] w-full overflow-hidden rounded-[2em]" />
+    ),
+  }
+);
 
 const aboutParagraphs = [
   'I design and build engaging and polished user interfaces for both web and mobile. My expertise lies in the TypeScript, React, and React Native ecosystem, where I focus on writing scalable and maintainable code that helps businesses grow.',
@@ -28,6 +37,13 @@ export const AboutMe = () => {
     amount: 0.2,
     once: true,
   });
+  const [shouldLoadSpecializations, setShouldLoadSpecializations] = useState(false);
+
+  useEffect(() => {
+    if (isSpecializationsInView) {
+      setShouldLoadSpecializations(true);
+    }
+  }, [isSpecializationsInView]);
 
   return (
     <SectionLayout>
@@ -75,9 +91,13 @@ export const AboutMe = () => {
         initial="initial"
         animate={isSpecializationsInView ? 'animate' : 'initial'}
         custom={0.2}
-        className="mt-4 rounded-[2em] border border-neutral-200/40 2xl:mt-24"
+        className="mt-4 overflow-hidden rounded-[2em] border border-neutral-200/40 2xl:mt-24"
       >
-        <Specializations isInView={isSpecializationsInView} />
+        {shouldLoadSpecializations ? (
+          <Specializations isInView={isSpecializationsInView} />
+        ) : (
+          <div className="relative h-[400px] w-full overflow-hidden rounded-[2em]" />
+        )}
       </motion.div>
     </SectionLayout>
   );
