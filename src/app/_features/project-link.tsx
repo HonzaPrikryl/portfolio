@@ -96,8 +96,11 @@ export const ProjectLink = ({ title, category, imageUrl, href }: ProjectLinkProp
           src={imageUrl}
           alt={`Project image for ${title}`}
           fill
-          sizes="(min-width: 768px) 256px, 224px"
-          className="object-cover"
+          unoptimized
+          quality={100}
+          sizes="256px"
+          className="object-cover select-none"
+          draggable={false}
         />
       </motion.div>
 

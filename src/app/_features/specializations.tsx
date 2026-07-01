@@ -15,7 +15,11 @@ const HOVER_CURSOR_RADIUS = 32;
 const CURSOR_BODY_EASING = 0.35;
 const OFFSCREEN_POINTER_POSITION = { x: -1000, y: -1000 };
 
-const setBodyPosition = (body: Body, position: { x: number; y: number }, updateVelocity = false) => {
+const setBodyPosition = (
+  body: Body,
+  position: { x: number; y: number },
+  updateVelocity = false
+) => {
   const setPosition = Body.setPosition as unknown as (
     targetBody: Body,
     targetPosition: { x: number; y: number },
@@ -46,6 +50,15 @@ const skills = [
   { name: 'NODE JS', size: 100 },
   { name: 'REST API', size: 100 },
   { name: 'OPENLAYERS', size: 100 },
+  { name: 'DRIZZLE', size: 100 },
+  { name: 'PRISMA', size: 100 },
+  { name: 'POSTGRESQL', size: 100 },
+  { name: 'ZOD', size: 100 },
+  { name: 'JEST', size: 100 },
+  { name: 'VITEST', size: 100 },
+  { name: 'HUSKY', size: 100 },
+  { name: 'ESLINT', size: 100 },
+  { name: 'PRETTIER', size: 100 },
 ];
 
 export const Specializations = ({ isInView }: { isInView: boolean }) => {
@@ -172,8 +185,12 @@ export const Specializations = ({ isInView }: { isInView: boolean }) => {
       if (!pointerRef.current.isInside) return;
 
       const nextPosition = {
-        x: cursorBody.position.x + (pointerRef.current.x - cursorBody.position.x) * CURSOR_BODY_EASING,
-        y: cursorBody.position.y + (pointerRef.current.y - cursorBody.position.y) * CURSOR_BODY_EASING,
+        x:
+          cursorBody.position.x +
+          (pointerRef.current.x - cursorBody.position.x) * CURSOR_BODY_EASING,
+        y:
+          cursorBody.position.y +
+          (pointerRef.current.y - cursorBody.position.y) * CURSOR_BODY_EASING,
       };
 
       setBodyPosition(cursorBody, nextPosition, true);
