@@ -59,6 +59,10 @@ const skills = [
   { name: 'HUSKY', size: 100 },
   { name: 'ESLINT', size: 100 },
   { name: 'PRETTIER', size: 100 },
+  { name: 'CLERK', size: 100 },
+  { name: 'CLAUDEFLARE R2', size: 100 },
+  { name: 'SENTRY', size: 100 },
+  { name: 'CI/CD', size: 100 },
 ];
 
 export const Specializations = ({ isInView }: { isInView: boolean }) => {
