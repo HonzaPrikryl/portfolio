@@ -11,16 +11,25 @@ type AnimatedTextProps = {
   className?: string;
   isReady: boolean;
   delay?: number;
+  align?: 'left' | 'center';
 };
 
-export const AnimatedText = ({ text, className, isReady, delay = 0 }: AnimatedTextProps) => {
+export const AnimatedText = ({
+  text,
+  className,
+  isReady,
+  delay = 0,
+  align = 'left',
+}: AnimatedTextProps) => {
   const { setCursorVariant } = useCursor();
 
   if (!isReady) return null;
 
+  const justifyClass = align === 'center' ? 'justify-center' : 'justify-start';
+
   return (
     <div className={`relative block overflow-hidden ${className}`}>
-      <div className="flex justify-start lg:justify-center">
+      <div className={`flex ${justifyClass}`}>
         {Array.from(text).map((letter, index) => (
           <motion.span
             key={index}
@@ -40,7 +49,7 @@ export const AnimatedText = ({ text, className, isReady, delay = 0 }: AnimatedTe
         ))}
       </div>
 
-      <div className="absolute inset-0 flex justify-start lg:justify-center">
+      <div className={`absolute inset-0 flex ${justifyClass}`}>
         {Array.from(text).map((letter, index) => (
           <motion.span
             key={index}

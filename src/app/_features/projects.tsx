@@ -12,7 +12,7 @@ const projects = [
     title: 'Tradenza',
     category: 'Web / Full-Stack / Ownership',
     imageUrl: '/project-tradenza.png',
-    href: 'https://app.tradenza.dev/',
+    href: 'https://tradenza.dev/',
   },
   {
     id: 2,
