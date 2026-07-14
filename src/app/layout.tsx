@@ -8,7 +8,7 @@ import { Metadata } from 'next';
 import AnimatedGradientBackground from '@/app/_features/animated-gradient-background';
 import { Viewport } from 'next';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://janprikryl.me';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://honzaprikryl.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
