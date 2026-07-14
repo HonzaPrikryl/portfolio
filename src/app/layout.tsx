@@ -13,13 +13,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://janprikryl.me';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Honza Přikryl | React Developer',
+    default: 'Honza Přikryl | Full-Stack Developer',
     template: '%s | Honza Přikryl',
   },
   description:
-    'Portfolio of Honza Přikryl, a React and React Native developer focused on polished, scalable TypeScript interfaces.',
+    'Portfolio of Honza Přikryl, a Full-Stack and React Native developer focused on polished, scalable TypeScript interfaces.',
   keywords: [
     'Honza Přikryl',
+    'Full-Stack Developer',
     'React Developer',
     'React Native Developer',
     'TypeScript',
@@ -29,26 +30,26 @@ export const metadata: Metadata = {
   authors: [{ name: 'Honza Přikryl' }],
   creator: 'Honza Přikryl',
   openGraph: {
-    title: 'Honza Přikryl | React Developer',
+    title: 'Honza Přikryl | Full-Stack Developer',
     description:
-      'React and React Native portfolio focused on polished, scalable TypeScript interfaces.',
+      'Full-Stack and React Native portfolio focused on polished, scalable TypeScript interfaces.',
     type: 'website',
     locale: 'en_US',
     images: [
       {
-        url: '/project-vision.png',
+        url: '/hero-view-og.png',
         width: 1200,
-        height: 681,
-        alt: 'Vision project preview by Honza Přikryl',
+        height: 623,
+        alt: 'Honza Přikryl portfolio preview',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Honza Přikryl | React Developer',
+    title: 'Honza Přikryl | Full-Stack Developer',
     description:
-      'React and React Native portfolio focused on polished, scalable TypeScript interfaces.',
-    images: ['/project-vision.png'],
+      'Full-Stack and React Native portfolio focused on polished, scalable TypeScript interfaces.',
+    images: ['/hero-view-og.png'],
   },
   robots: {
     index: true,
