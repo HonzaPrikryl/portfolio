@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion, useAnimation } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { MenuToggle } from '@/components/ui/menu-toggle';
@@ -13,7 +13,8 @@ interface Props {
 }
 
 export const Header = ({ isReady, isFooterAnimationComplete }: Props) => {
-  const [lastY, setLastY] = useState(0);
+  const lastYRef = useRef(0);
+  const lastHeightRef = useRef(0);
   const controls = useAnimation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { lenis } = useSmoothScroll();
@@ -51,20 +52,31 @@ export const Header = ({ isReady, isFooterAnimationComplete }: Props) => {
     }
 
     const handleScroll = () => {
-      const currentY = window.scrollY;
       if (!isReady) return;
 
-      if (currentY > lastY && currentY > 4) {
+      const currentY = window.scrollY;
+      const currentHeight = document.documentElement.scrollHeight;
+
+      if (currentHeight !== lastHeightRef.current) {
+        lastHeightRef.current = currentHeight;
+        lastYRef.current = currentY;
+        return;
+      }
+
+      const delta = currentY - lastYRef.current;
+      if (Math.abs(delta) < 4) return;
+
+      if (delta > 0 && currentY > 4) {
         controls.start('hidden');
-      } else if (currentY < lastY) {
+      } else if (delta < 0) {
         controls.start('visible');
       }
-      setLastY(currentY);
+      lastYRef.current = currentY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastY, isReady, controls, isFooterAnimationComplete]);
+  }, [isReady, controls, isFooterAnimationComplete]);
 
   useEffect(() => {
     if (isMenuOpen) {
